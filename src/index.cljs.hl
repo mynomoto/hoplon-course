@@ -1,0 +1,40 @@
+(page "index.html"
+  (:require
+    [tailrecursion.hoplon.reload :refer [reload-all]]))
+
+(reload-all 1000)
+
+(defc name-input "")
+(defc email-input "")
+(defc step :nome)
+
+(html
+  (head)
+  (body
+    (h1 "Form filling")
+    (div :toggle (cell= (= :nome step))
+      (h2 "Nome:")
+      (input
+        :type "text"
+        :placeholder "Type something here"
+        :value name-input
+        :keyup #(reset! name-input @%))
+      (button
+        :click #(reset! step :email)
+        "Next"))
+    (div :toggle (cell= (= :email step))
+      (h2 (text "Hello ~{name-input}"))
+      (p "What's your email:")
+      (input
+        :type "text"
+        :placeholder "Type something here"
+        :value email-input
+        :keyup #(reset! email-input @%))
+      (button
+        :click #(reset! step :final)
+        "Next"))
+    (div :toggle (cell= (= :final step))
+      (h2 "You finished the form")
+      (p (text "Your name is ~{name-input}"))
+      (p (text "Your email is ~{email-input}")))))
+
