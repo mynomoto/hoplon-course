@@ -6,35 +6,34 @@
 
 (defc name-input "")
 (defc email-input "")
-(defc step :nome)
+(defc all-data [])
 
 (html
   (head)
   (body
-    (h1 "Form filling")
-    (div :toggle (cell= (= :nome step))
-      (h2 "Nome:")
+    (h1 "Name and e-mail")
+    (div
       (input
         :type "text"
-        :placeholder "Type something here"
+        :placeholder "Name"
         :value name-input
-        :keyup #(reset! name-input @%))
-      (button
-        :click #(reset! step :email)
-        "Next"))
-    (div :toggle (cell= (= :email step))
-      (h2 (text "Hello ~{name-input}"))
-      (p "What's your email:")
+        :blur #(reset! name-input @%))
       (input
         :type "text"
-        :placeholder "Type something here"
+        :placeholder "Email"
         :value email-input
-        :keyup #(reset! email-input @%))
+        :blur #(reset! email-input @%))
       (button
-        :click #(reset! step :final)
+        :click #(swap! all-data conj {:email @email-input :name @name-input})
         "Next"))
-    (div :toggle (cell= (= :final step))
-      (h2 "You finished the form")
-      (p (text "Your name is ~{name-input}"))
-      (p (text "Your email is ~{email-input}")))))
+    (table
+      (thead
+        (tr
+          (th "Name")
+          (th "Email")))
+      (tbody
+        (loop-tpl :bindings [d all-data]
+          (tr
+            (td (text "~(:name d)"))
+            (td (text "~(:email d)"))))))))
 
